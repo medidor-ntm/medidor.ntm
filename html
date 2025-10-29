@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instruções do Medidor</title>
+    <!-- Carrega o Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Define a fonte Inter, padrão do Tailwind -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilo para o feedback de cópia */
+        .copied-feedback {
+            display: none;
+            font-size: 0.875rem; /* text-sm */
+            color: #10B981; /* green-600 */
+            margin-left: 0.5rem; /* ml-2 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased">
+
+    <div class="container mx-auto max-w-3xl p-6 my-12 bg-white rounded-lg shadow-lg">
+
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 text-center">Instruções para Instalação (Linux)</h1>
+            <p class="text-center text-gray-600 mt-2">Siga os passos abaixo para baixar e executar o script.</p>
+        </header>
+
+        <!-- Seção de Download -->
+        <section class="mb-8 p-6 bg-blue-50 border border-blue-200 rounded-lg text-center">
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">1. Baixe o Script</h2>
+            <p class="text-gray-700 mb-6">Primeiro, clique no botão abaixo para baixar o arquivo `medidor.sh` para sua pasta de Downloads.</p>
+            <!-- O link de download é criado aqui -->
+            <a id="downloadButton" href="#" download="medidor.sh" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300">
+                Baixar medidor.sh
+            </a>
+        </section>
+
+        <!-- Seção de Instruções do Terminal -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4">2. Siga os Passos no Terminal</h2>
+            
+            <div class="space-y-6">
+                <!-- Passo 1: Abrir o Terminal -->
+                <div class="p-4 border rounded-lg">
+                    <h3 class="font-semibold text-lg text-gray-800">Como abrir o terminal no Linux:</h3>
+                    <ul class="list-disc list-inside text-gray-700 mt-2 space-y-1">
+                        <li>Procure por "Terminal" no menu de aplicativos do seu sistema.</li>
+                    </ul>
+                </div>
+
+                <!-- Passo 2: Acessar Pasta (Removido) -->
+
+                <!-- Passo 3: Colar Comandos -->
+                <div class="p-4 border rounded-lg">
+                    <h3 class="font-semibold text-lg text-gray-800">Como colar comandos no terminal:</h3>
+                    <ul class="list-disc list-inside text-gray-700 mt-2 space-y-1">
+                        <li>Clique no botão "Copiar" ao lado do comando nesta página.</li>
+                        <li>Volte para a janela do terminal.</li>
+                        <li>Clique com o <strong class="font-semibold">botão direito do mouse</strong> dentro do terminal.</li>
+                        <li>Selecione a opção "Colar" (ou "Paste").</li>
+                        <li>Pressione `Enter` para executar o comando.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Comandos para Copiar -->
+        <section class="p-6 bg-gray-50 border border-gray-200 rounded-lg">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-6">3. Execute os Comandos</h2>
+            <p class="text-gray-700 mb-6">Copie o bloco de comandos abaixo, cole no terminal e pressione `Enter`. O terminal executará um comando de cada vez.</p>
+
+            <div class="space-y-4">
+                <!-- Comando Combinado -->
+                <div class="flex items-center space-x-4">
+                    <!-- Usamos 'whitespace-pre' para preservar as quebras de linha no display -->
+                    <code id="cmd_combinado" class="flex-1 bg-gray-200 text-gray-900 p-3 rounded-md font-mono text-sm sm:text-base whitespace-pre">cd /home/profuturo/downloads || cd /home/profuturo/descargas
+chmod +x medidor.sh
+./medidor.sh</code>
+                    <button onclick="copyToClipboard('cmd_combinado', 'feedback_combinado')" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+                        Copiar
+                    </button>
+                    <span id="feedback_combinado" class="copied-feedback">Copiado!</span>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Conteúdo do script medidor.sh
+        const scriptContent = `#!/bin/bash
+# Script para desinstalar, baixar e reinstalar o Medidor Educação Conectada
+
+echo "Iniciando processo de atualização completa..."
+echo "Este script precisa de permissão de administrador."
+echo "---------------------------------------------------"
+
+# --- Definir Diretório de Download ---
+# Usamos $HOME, que aponta para o diretório /home/usuario_atual
+DOWNLOAD_DIR="$HOME"
+echo "Usando diretório: $DOWNLOAD_DIR"
+
+# --- PASSO 0: Desinstalação Completa ---
+echo "[Passo 0] Desinstalando completamente a versão anterior..."
+echo "  Parando serviços..."
+sudo systemctl stop simet-lmapd.service simet-ma.service || true
+
+echo "  Desabilitando serviços..."
+sudo systemctl disable simet-lmapd.service simet-ma.service || true
+
+echo "  Purgando pacotes do APT (remover registros)..."
+sudo apt purge -y simet-lmapd simet-ma-mec || true
+sudo apt autoremove -y || true
+
+echo "  Removendo diretórios e arquivos antigos..."
+sudo rm -rf /opt/simet
+sudo rm -f /etc/init.d/simet-lmapd
+sudo rm -f /etc/init.d/simet-ma
+
+echo "  Recarregando daemons..."
+sudo systemctl daemon-reload
+echo "[Passo 0] Desinstalação concluída."
+echo "---------------------------------------------------"
+
+
+# --- PASSO 1: Remover instalador antigo ---
+echo "[Passo 1] Removendo instalador antigo (se existir)..."
+rm -f "$DOWNLOAD_DIR/MedidorEducacaoConectada-linux.run"
+echo "[Passo 1] Concluído."
+echo "---------------------------------------------------"
+
+
+# --- PASSO 2: Baixar novo instalador ---
+echo "[Passo 2] Baixando novo instalador..."
+cd "$DOWNLOAD_DIR" || { echo "ERRO: Falha ao acessar o diretório $DOWNLOAD_DIR."; exit 1; }
+wget "https://download.simet.nic.br/medidor-educ-conectada/linux/MedidorEducacaoConectada-linux.run"
+echo "[Passo 2] Download concluído."
+echo "---------------------------------------------------"
+
+
+# --- PASSO 3: Dar Permissão ---
+echo "[Passo 3] Dando permissão de execução..."
+sudo chmod a+x "MedidorEducacaoConectada-linux.run"
+echo "[Passo 3] Concluído."
+echo "---------------------------------------------------"
+
+
+# --- PASSO 4: Executar Instalador ---
+echo "[Passo 4] Executando o instalador..."
+echo "A caixa de diálogo de instalação deve aparecer agora."
+echo ""
+sudo "./MedidorEducacaoConectada-linux.run"
+
+echo ""
+echo "---------------------------------------------------"
+echo "PROCESSO CONCLUÍDO!"
+`;
+
+        // Função para criar o link de download
+        function setupDownloadLink() {
+            const downloadButton = document.getElementById('downloadButton');
+            // Cria um Blob (Binary Large Object) com o conteúdo do script
+            const blob = new Blob([scriptContent], { type: 'text/x-shellscript' });
+            // Cria uma URL para o Blob
+            const url = URL.createObjectURL(blob);
+            // Define a URL no link de download
+            downloadButton.href = url;
+        }
+
+        // Chama a função quando a página carregar
+        window.onload = setupDownloadLink;
+
+        // Função para copiar texto para a área de transferências
+        function copyToClipboard(elementId, feedbackId) {
+            // Cria um elemento de texto temporário
+            const tempInput = document.createElement('textarea');
+            tempInput.style.position = 'absolute';
+            tempInput.style.left = '-9999px';
+            
+            // Pega o texto do elemento <code>
+            // innerText preserva as quebras de linha como são exibidas
+            const textToCopy = document.getElementById(elementId).innerText;
+            tempInput.value = textToCopy;
+            
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                // Tenta copiar o texto
+                document.execCommand('copy');
+                
+                // Mostra feedback visual
+                const feedbackEl = document.getElementById(feedbackId);
+                feedbackEl.style.display = 'inline';
+                setTimeout(() => {
+                    feedbackEl.style.display = 'none';
+                }, 2000); // Esconde o feedback após 2 segundos
+
+            } catch (err) {
+                console.error('Falha ao copiar texto: ', err);
+            }
+            
+            // Remove o elemento temporário
+            document.body.removeChild(tempInput);
+        }
+    </script>
+
+</body>
+</html>
+
+
+
+
+
