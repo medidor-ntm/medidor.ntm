@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>Instruções do Medidor</title>
     <!-- Carrega o Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
     <!-- Define a fonte Inter, padrão do Tailwind --><style>
@@ -15,6 +15,10 @@
             font-size: 0.875rem; /* text-sm */
             color: #10B981; /* green-600 */
             margin-left: 0.5rem; /* ml-2 */
+        }
+        /* Começa a aba alternativa escondida */
+        #comandos-alternativos {
+            display: none;
         }
     </style>
 </head>
@@ -80,6 +84,24 @@ chmod +x medidor.sh
                 <ul class="list-disc list-inside text-gray-700 mt-4 space-y-1">
                     <li>Pressione `Enter` para executar os comandos.</li>
                 </ul>
+            </div>
+        </section>
+
+        <!-- Seção de Comandos Alternativos (Oculta) --><section class="mt-12 border-t pt-6">
+            <button id="toggle-alternativos" onclick="toggleVisibility('comandos-alternativos', 'toggle-alternativos')" class="w-full text-left text-lg font-semibold text-gray-700 hover:text-gray-900 p-3 bg-gray-100 rounded-lg">
+                Mostrar comandos alternativos (para Área de Trabalho)
+            </button>
+            <div id="comandos-alternativos" class="mt-4 p-6 bg-gray-50 border border-gray-200 rounded-lg">
+                <p class="text-gray-700 mb-6">Se você baixou o arquivo para a Área de Trabalho, use este bloco de comandos:</p>
+                <div class="flex items-center space-x-4">
+                    <code id="cmd_alternativo" class="flex-1 bg-gray-200 text-gray-900 p-3 rounded-md font-mono text-sm sm:text-base whitespace-pre">cd /home/profuturo/Área\ de\ Trabalho
+chmod +x medidor.sh
+./medidor.sh</code>
+                    <button onclick="copyToClipboard('cmd_alternativo', 'feedback_alternativo')" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+                        Copiar
+                    </button>
+                    <span id="feedback_alternativo" class="copied-feedback">Copiado!</span>
+                </div>
             </div>
         </section>
 
@@ -201,6 +223,20 @@ echo "PROCESSO CONCLUÍDO!"
             
             // Remove o elemento temporário
             document.body.removeChild(tempInput);
+        }
+
+        // Nova função para mostrar/esconder a aba
+        function toggleVisibility(elementId, buttonId) {
+            const el = document.getElementById(elementId);
+            const button = document.getElementById(buttonId);
+            
+            if (el.style.display === 'none' || el.style.display === '') {
+                el.style.display = 'block';
+                button.textContent = 'Esconder comandos alternativos';
+            } else {
+                el.style.display = 'none';
+                button.textContent = 'Mostrar comandos alternativos (para Área de Trabalho)';
+            }
         }
     </script>
 
